@@ -4,8 +4,8 @@ def transaction1(conn):
     try:
         cur = conn.cursor()
         cur.execute('begin')
-        cur.execute('select * from count where cash = 100')
-        cur.execute('select * from count where cash = 100')
+        cur.execute('select cash from count where id = 1')
+        cur.execute('select cash from count where id = 1')
         cur.execute('commit')
         cur.close()
         print('success1')
@@ -16,12 +16,7 @@ def transaction2(conn):
     try:
         cur = conn.cursor()
         cur.execute('begin')
-        cur.execute('select max(id) from count')
-        last_id = 0
-        row = cur.fetchone()
-        if row[0]:
-            last_id = row[0]
-        cur.execute("INSERT INTO count (id, cash) VALUES(%s, %s)", (last_id+1, 100))
+        cur.execute('update count set cash = 100 where id = 1');
         cur.execute('commit')
         cur.close()
         print('success2')
