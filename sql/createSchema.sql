@@ -5,3 +5,5 @@ create table if not exists cal (
     x int not null,
     y int not null
 );
+
+-- TODO: insert initial data
