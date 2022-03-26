@@ -1,13 +1,26 @@
 import sys
 import psycopg2
 from init import config
-from src import lost_update
-import random
+from src import lost_update, phantom_read
+
+functionMap = {
+    'Lost-Update': [lost_update.run],
+    'Phantom-Read': [phantom_read.transaction1, phantom_read.transaction2],
+}
+
+isolationMap = {
+    'RC': 'READ COMMITTED',
+    'RR': 'REPEATABLE READ',
+    'S': 'Serializable'
+}
 
 """
 @:param1: Anomaly Type
     Lost-Update
-    ...
+    Non-Repeatable-Read
+    Phantom-Read
+    Read-Skew
+    Write-Skew
 @:param2: Isolation Level
     RC: read committed
     RR: repeatable read
@@ -15,30 +28,20 @@ import random
 """
 if __name__ == '__main__':
 
-    TYPE = sys.argv[1]
-    IL = sys.argv[2]
-    # print(TYPE)
-    # print(IL)
-    conn = None
+    TYPE = sys.argv[1]          # anomaly type
+    IL = sys.argv[2]            # isolation level
 
+    conn = None
     try:
         params = config()
-
         conn = psycopg2.connect(**params)
 
-        if IL == 'RC':
-            conn.set_session(isolation_level='READ COMMITTED', autocommit=False)
-        elif IL == 'RR':
-            conn.set_session(isolation_level='REPEATABLE READ', autocommit=False)
-        elif IL == 'S':
-            conn.set_session(isolation_level='SERIALIZABLE', autocommit=False)
-        else:
-            raise Exception('Isolation level {0} not known'.format(IL))
+        isolationLevel = isolationMap[IL]
+        funcs = functionMap[TYPE]
 
-        if TYPE == 'Lost-Update':
-            lost_update.run(conn)
-        else:
-            raise Exception('Anomaly type {0} not known'.format(TYPE))
+        conn.set_session(isolation_level=isolationLevel, autocommit=False)
+        for func in funcs:
+            func(conn)
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
