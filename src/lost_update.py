@@ -4,8 +4,8 @@ def transaction1(conn):
     try:
         cur = conn.cursor()
         cur.execute('begin')
-        cur.execute('select cash from count where id = 1')
-        cur.execute('update count set cash = 50 where id = 1')
+        cur.execute('select createdby from post where id = 1')
+        cur.execute('update post set createdby = 50 where id = 1')
         cur.execute('commit')
         cur.close()
         print('success1')
@@ -16,8 +16,8 @@ def transaction2(conn):
     try:
         cur = conn.cursor()
         cur.execute('begin')
-        cur.execute('select cash from count where id = 1')
-        cur.execute('update count set cash = 80 where id = 1')
+        cur.execute('select createdby from post where id = 1')
+        cur.execute('update post set createdby = 80 where id = 1')
         cur.execute('commit')
         cur.close()
         print('success2')

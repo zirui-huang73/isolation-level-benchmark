@@ -16,12 +16,12 @@ def transaction2(conn):
     try:
         cur = conn.cursor()
         cur.execute('begin')
-        cur.execute('select max(id) from count')
+        cur.execute('select max(id) from post')
         last_id = 0
         row = cur.fetchone()
         if row[0]:
             last_id = row[0]
-        cur.execute("INSERT INTO count (id, cash) VALUES(%s, %s)", (last_id+1, 100))
+        cur.execute("INSERT INTO post (id, createdby) VALUES(%s, %s)", (last_id+1, 1))
         cur.execute('commit')
         cur.close()
         print('success2')
