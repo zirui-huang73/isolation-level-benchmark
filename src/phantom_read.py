@@ -9,6 +9,8 @@ def transaction1(conn):
         cur.execute('commit')
         cur.close()
         print('success1')
+    except OperationalError as error:
+        print("get operational error {}".format(error))
     except (Exception, DatabaseError) as error:
         print(error)
 

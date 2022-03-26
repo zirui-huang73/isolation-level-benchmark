@@ -2,6 +2,7 @@ import sys
 import psycopg2
 from init import config
 from src import lost_update
+import random
 
 """
 @:param1: Anomaly Type
@@ -16,9 +17,8 @@ if __name__ == '__main__':
 
     TYPE = sys.argv[1]
     IL = sys.argv[2]
-    print(TYPE)
-    print(IL)
-
+    # print(TYPE)
+    # print(IL)
     conn = None
 
     try:
@@ -28,17 +28,17 @@ if __name__ == '__main__':
 
         if IL == 'RC':
             conn.set_session(isolation_level='READ COMMITTED', autocommit=False)
-            if TYPE == 'Lost-Update':
-                lost_update.transaction1(conn)
-                lost_update.transaction2(conn)
         elif IL == 'RR':
-            print('RR')
-
+            conn.set_session(isolation_level='REPEATABLE READ', autocommit=False)
         elif IL == 'S':
-            print('S')
-
+            conn.set_session(isolation_level='SERIALIZABLE', autocommit=False)
         else:
             raise Exception('Isolation level {0} not known'.format(IL))
+
+        if TYPE == 'Lost-Update':
+            lost_update.run(conn)
+        else:
+            raise Exception('Anomaly type {0} not known'.format(TYPE))
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
