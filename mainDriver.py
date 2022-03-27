@@ -1,11 +1,15 @@
 import sys
 import psycopg2
 from init import config
-from src import lost_update, phantom_read
+from src import lost_update, phantom_read, nonrepeatable_read, Read_Skew, Write_Skew
+import random
 
-functionMap = {
-    'Lost-Update': [lost_update.run],
-    'Phantom-Read': [phantom_read.transaction1, phantom_read.transaction2],
+TransactionClassMap = {
+    'LU': [lost_update.transaction1, lost_update.transaction2],
+    'PR': [phantom_read.transaction1, phantom_read.transaction2],
+    'NR': [nonrepeatable_read.transaction1, nonrepeatable_read.transaction2],
+    'RS': [Read_Skew.transaction1, Read_Skew.transaction2],
+    'WS': [Write_Skew.transaction1, Write_Skew.transaction2],
 }
 
 isolationMap = {
@@ -37,11 +41,22 @@ if __name__ == '__main__':
         conn = psycopg2.connect(**params)
 
         isolationLevel = isolationMap[IL]
-        funcs = functionMap[TYPE]
+
+        conn.set_session(isolation_level=isolationLevel, autocommit=True)
+        with conn.cursor() as cur:
+            cur.execute(open("sql/schema.sql", "r").read())
+
+        TransactionClasses = TransactionClassMap[TYPE]
+
+        index = random.randint(0, len(TransactionClasses) - 1)
+        print(index)
+        TransactionClass = TransactionClasses[index]
 
         conn.set_session(isolation_level=isolationLevel, autocommit=False)
-        for func in funcs:
-            func(conn)
+
+        transaction = TransactionClass(conn)
+        result = transaction.exec()
+        print(result)
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)

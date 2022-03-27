@@ -9,7 +9,7 @@ class Transaction(object):
         self.return_status = False
 
     def process(self):
-        pass
+        raise NotImplementedError()
 
     def exec(self):
         start_time = time.perf_counter()

@@ -1,22 +1,24 @@
 from psycopg2 import *
+from .transaction import Transaction
 
-def transaction1(conn):
-    try:
-        cur = conn.cursor()
+class transaction1(Transaction):
+    def __init__(self, conn):
+        super().__init__(conn)
+
+    def process(self):
+        cur = self.conn.cursor()
         cur.execute('begin')
         cur.execute('select * from cal where x = 100')
         cur.execute('select * from cal where x = 100')
         cur.execute('commit')
         cur.close()
-        print('success1')
-    except OperationalError as error:
-        print("get operational error {}".format(error))
-    except (Exception, DatabaseError) as error:
-        print(error)
 
-def transaction2(conn):
-    try:
-        cur = conn.cursor()
+class transaction2(Transaction):
+    def __init__(self, conn):
+        super().__init__(conn)
+        
+    def process(self):
+        cur = self.conn.cursor()
         cur.execute('begin')
         cur.execute('select max(id) from cal')
         last_id = 0
@@ -26,7 +28,3 @@ def transaction2(conn):
         cur.execute("INSERT INTO cal (id, x, y) VALUES(%s, %s, %s)", (last_id+1, 100, 100))
         cur.execute('commit')
         cur.close()
-        print('success2')
-    except (Exception, DatabaseError) as error:
-        print(error)
-
