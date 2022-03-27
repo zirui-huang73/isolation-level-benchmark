@@ -1,5 +1,6 @@
 from psycopg2 import *
 import time
+import logging
 
 class Transaction(object):
     def __init__(self, conn):
@@ -26,10 +27,10 @@ class Transaction(object):
                 self.num_retry += 1
                 sleep_time: float = self.num_retry * 0.1
                 time.sleep(sleep_time)
-                print("get operational error {}, sleep {} seconds".format(error, sleep_time))
+                logging.warning("get operational error {}, sleep {} seconds".format(error, sleep_time))
                 continue
             except (Exception, DatabaseError) as error:
-                print("get other error {}".format(error))
+                logging.warning("get other error {}".format(error))
                 break
 
         return { 'elapsed_time_second': self.elapsed_time, 'num_retry': self.num_retry, 'return_status': self.return_status }

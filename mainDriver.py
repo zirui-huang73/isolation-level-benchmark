@@ -4,6 +4,10 @@ from init import config
 from src import lost_update, phantom_read, nonrepeatable_read, Read_Skew, Write_Skew
 import random
 
+import logging
+FORMAT = '%(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO)
+
 TransactionClassMap = {
     'LU': [lost_update.transaction1, lost_update.transaction2],
     'PR': [phantom_read.transaction1, phantom_read.transaction2],
@@ -41,25 +45,19 @@ if __name__ == '__main__':
         conn = psycopg2.connect(**params)
 
         isolationLevel = isolationMap[IL]
-
-        conn.set_session(isolation_level=isolationLevel, autocommit=True)
-        with conn.cursor() as cur:
-            cur.execute(open("sql/schema.sql", "r").read())
-
         TransactionClasses = TransactionClassMap[TYPE]
 
         index = random.randint(0, len(TransactionClasses) - 1)
-        print(index)
         TransactionClass = TransactionClasses[index]
 
         conn.set_session(isolation_level=isolationLevel, autocommit=False)
 
         transaction = TransactionClass(conn)
         result = transaction.exec()
-        print(result)
+        logging.warning("transaction performance result: {}".format(result))
 
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        logging.error(error)
     finally:
         if conn is not None:
             conn.close()

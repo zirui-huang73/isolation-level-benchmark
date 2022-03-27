@@ -1,5 +1,6 @@
 import psycopg2
 from init import config
+import logging
 
 def get_conn():
     params = config()
@@ -8,7 +9,7 @@ def get_conn():
     cur = conn.cursor()
     cur.execute('SELECT version()')
     db_version = cur.fetchone()
-    print(db_version)
+    logging.info(db_version)
 
 if __name__ == '__main__':
     conn = None
@@ -20,11 +21,11 @@ if __name__ == '__main__':
         cur = conn.cursor()
         cur.execute('SELECT version()')
         db_version = cur.fetchone()
-        print(db_version)
+        logging.info(db_version)
 
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        logging.error(error)
     finally:
         if conn is not None:
             conn.close()
