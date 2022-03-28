@@ -57,7 +57,7 @@ if __name__ == '__main__':
         logging.warning("transaction performance result: {}".format(result))
 
     except (Exception, psycopg2.DatabaseError) as error:
-        logging.error(error)
+        logging.exception(error)
     finally:
         if conn is not None:
             conn.close()

@@ -2,6 +2,9 @@ import psycopg2
 from init import config
 import logging
 
+FORMAT = '%(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO)
+
 def get_conn():
     params = config()
 
