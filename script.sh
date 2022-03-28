@@ -10,13 +10,20 @@ fi
 anomaly=$1
 iso_level=$2
 process_num=$3
-iteration_num=$3
 
 dateTime=$(date +'%Y%m%d%H%M%S')
+fileName="${anomaly}-${iso_level}-${process_num}-${dateTime}"
+echo "\n------start running cases for ${fileName}------\n"
 
 for ((c = 0; c < $process_num; c++))
 do
-  	fileName="${dateTime}-$c"
-	exec python3 mainDriver.py $anomaly $iso_level $fileName $iteration_num &
+	python3 mainDriver.py $anomaly $iso_level $fileName $c &
+	pids[${c}]=$!
 done
-	
+
+# wait for all pids
+for pid in ${pids[*]}; do
+    wait $pid
+done
+
+echo "\n------finish running cases for ${fileName}, all subprocess end------\n"

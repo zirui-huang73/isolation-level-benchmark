@@ -7,7 +7,6 @@ import numpy as np
 if __name__ == '__main__':
     dirPath = 'logs'
     subDirPath = sys.argv[1]
-
     latencies = []
     numProceeded = 0
     numSucceeded = 0

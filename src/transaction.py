@@ -17,15 +17,16 @@ class Transaction(object):
         while True:
             try:
                 self.elapsed_time = time.perf_counter() - start_time
-                if self.num_retry == 3:
-                    raise Exception("fail with too much retry(3 times)")
                 self.process()
                 self.return_status = True
                 break
             except OperationalError as error:
                 self.conn.rollback()
                 self.num_retry += 1
-                sleep_time: float = self.num_retry * 0.1
+                if self.num_retry == 4:
+                    logging.error("fail with too much retry(4 times)")
+                    break
+                sleep_time: float = (2 ** self.num_retry) * 0.1
                 time.sleep(sleep_time)
                 logging.warning("get operational error {}, sleep {} seconds".format(error, sleep_time))
                 continue
