@@ -32,6 +32,5 @@ class Transaction(object):
             except (Exception, DatabaseError) as error:
                 logging.warning("get other error {}".format(error))
                 break
-
         return { 'elapsed_time_second': self.elapsed_time, 'num_retry': self.num_retry, 'return_status': self.return_status }
 
