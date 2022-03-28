@@ -10,12 +10,13 @@ fi
 anomaly=$1
 iso_level=$2
 process_num=$3
+iteration_num=$3
 
 dateTime=$(date +'%Y%m%d%H%M%S')
 
 for ((c = 0; c < $process_num; c++))
 do
-  fileName="${dateTime}-$c"
-	exec python3 mainDriver.py $anomaly $iso_level $fileName &
+  	fileName="${dateTime}-$c"
+	exec python3 mainDriver.py $anomaly $iso_level $fileName $iteration_num &
 done
 	
