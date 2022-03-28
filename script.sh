@@ -11,7 +11,7 @@ anomaly=$1
 iso_level=$2
 process_num=$3
 
-dateTime=$(date +'%Y-%m-%d-%H:%M:%S')
+dateTime=$(date +'%Y%m%d%H%M%S')
 
 for ((c = 0; c < $process_num; c++))
 do

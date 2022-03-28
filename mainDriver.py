@@ -1,12 +1,6 @@
-import sys
-import psycopg2
+import sys, psycopg2, random, json, os, logging
 from init import config
 from src import lost_update, phantom_read, nonrepeatable_read, Read_Skew, Write_Skew
-import random
-import json
-import os
-from datetime import datetime
-import logging
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 
@@ -40,7 +34,9 @@ if __name__ == '__main__':
 
     TYPE = sys.argv[1]          # anomaly type
     IL = sys.argv[2]            # isolation level
-    logFileName = sys.argv[3]            # ID passed from shell script
+    startTime = sys.argv[3]
+    iteration = sys.argv[4]
+    # logFileName = sys.argv[3]            # ID passed from shell script
 
     N = 10
 
@@ -62,9 +58,10 @@ if __name__ == '__main__':
             result[i] = transaction.exec()
 
         # write results to json file
-        if not os.path.exists('logs'):
-            os.makedirs('logs')
-        with open('logs/{0}.json'.format(logFileName), 'w') as outputFile:
+        dirPath = 'logs/{0}'.format(startTime)
+        if not os.path.exists(dirPath):
+            os.makedirs(dirPath)
+        with open('{0}/{1}.json'.format(dirPath, iteration), 'w') as outputFile:
             json.dump(result, outputFile)
 
     except (Exception, psycopg2.DatabaseError) as error:
