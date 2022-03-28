@@ -40,6 +40,7 @@ if __name__ == '__main__':
 
     TYPE = sys.argv[1]          # anomaly type
     IL = sys.argv[2]            # isolation level
+    logFileName = sys.argv[3]            # ID passed from shell script
 
     N = 10
 
@@ -63,8 +64,7 @@ if __name__ == '__main__':
         # write results to json file
         if not os.path.exists('logs'):
             os.makedirs('logs')
-        date_time = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-        with open('logs/{0}-{1}-{2}.json'.format(TYPE, IL, date_time), 'w') as outputFile:
+        with open('logs/{0}.json'.format(logFileName), 'w') as outputFile:
             json.dump(result, outputFile)
 
     except (Exception, psycopg2.DatabaseError) as error:
