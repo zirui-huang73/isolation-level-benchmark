@@ -9,7 +9,7 @@ class transaction1(Transaction):
         cur = self.conn.cursor()
         cur.execute('begin')
         cur.execute('select x from cal where id = 1')
-        cur.execute('update cal set t = 60 where id = 1')
+        cur.execute('update cal set y = 60 where id = 1')
         self.conn.commit()
         cur.close()
 
