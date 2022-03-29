@@ -18,4 +18,5 @@ python3 setup.py
 + for all test cases: `./run.sh <process-num>`, for example: `./run.sh 10`
 
 3. analyze statistics:
-+ run `python3 statistics.py <sub dirname>`
++ run `python3 statistics.py`
+
