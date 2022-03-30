@@ -6,6 +6,7 @@ if __name__ == '__main__':
     latencies = []
     numProceeded = 0
     numSucceeded = 0
+    numCorrect = 0
 
     for subDirPath in os.listdir('{0}'.format(dirPath)):
         for file in os.listdir('{0}/{1}'.format(dirPath, subDirPath)):
@@ -14,9 +15,10 @@ if __name__ == '__main__':
                 for key, value in content.items():
                     latencies.append(value['elapsed_time_second'])
                     numProceeded += 1
-                    if value['return_status']:
+                    if value['succeed']:
                         numSucceeded += 1
-
+                    if value['correct']:
+                        numCorrect += 1
 
         perc_50th = np.median(np.array(latencies))
         perc_95th = np.percentile(np.array(latencies), 95)
@@ -26,14 +28,16 @@ if __name__ == '__main__':
         print('--------------Statistics for {0}--------------'.format(subDirPath))
         print('Total number of transactions proceeded: {0}'.format(numProceeded))
         print('Total number of transactions succeeded: {0}'.format(numSucceeded))
-        print('Average latency: {0} seconds'.format(average))
-        print('50 percentile latency: {0} seconds'.format(perc_50th))
-        print('95 percentile latency: {0} seconds'.format(perc_95th))
-        print('99 percentile latency: {0} seconds'.format(perc_99th))
+        print('Total number of transactions correct: {0}'.format(numCorrect))
+        print('Average latency: {:.3f} ms'.format(average * 1000))
+        print('50 percentile latency: {:.3f} ms'.format(perc_50th * 1000))
+        print('95 percentile latency: {:.3f} ms'.format(perc_95th * 1000))
+        print('99 percentile latency: {:.3f} ms'.format(perc_99th * 1000))
 
         latencies.clear()
         numProceeded = 0
         numSucceeded = 0
+        numCorrect = 0
 
 
 

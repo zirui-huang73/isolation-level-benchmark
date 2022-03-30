@@ -1,5 +1,4 @@
 import random
-from psycopg2 import *
 from .transaction import Transaction
 
 very_large_id_range = (10 ** 8, 10 ** 9)
@@ -12,7 +11,10 @@ class transaction1(Transaction):
         cur = self.conn.cursor()
         cur.execute('begin')
         cur.execute("select * from cal where z = 'male'")
+        res1 = cur.fetchall()
         cur.execute("select * from cal where z = 'male'")
+        res2 = cur.fetchall()
+        self.correct = (res1.sort() == res2.sort())
         cur.execute('commit')
         cur.close()
 
