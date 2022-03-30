@@ -1,3 +1,10 @@
+CREATE OR REPLACE FUNCTION random_between(low INT, high INT) 
+   RETURNS INT AS
+$$
+BEGIN
+   RETURN floor(random() * (high-low + 1) + low);
+END;
+$$ language 'plpgsql' STRICT;
 
 drop table if exists cal;
 create table if not exists cal (
@@ -7,7 +14,14 @@ create table if not exists cal (
     z text
 );
 
-insert into cal values(1, 30, 10, 'male');
-insert into cal values(2, 100, 1000, 'female');
-insert into cal values(3, 60, 600, 'male');
-insert into cal values(4, 110, 1200, 'female');
+do $$
+begin
+for loop_cnt in 1..10000 loop
+    if loop_cnt % 2 = 0
+    then
+        insert into cal values(loop_cnt, loop_cnt, random_between(1, 10000), 'male');
+    else
+        insert into cal values(loop_cnt, loop_cnt, random_between(1, 10000), 'female');
+    end if;
+end loop;
+end; $$
