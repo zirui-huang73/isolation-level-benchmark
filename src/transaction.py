@@ -8,7 +8,7 @@ class Transaction(object):
         self.elapsed_time = -1
         self.num_retry = 0
         self.succeed = False
-        self.correct = False
+        self.correct = True
 
     def process(self):
         raise NotImplementedError()
@@ -17,7 +17,6 @@ class Transaction(object):
         start_time = time.perf_counter()
         while True:
             try:
-                self.elapsed_time = time.perf_counter() - start_time
                 self.process()
                 self.succeed = True
                 break
@@ -34,6 +33,8 @@ class Transaction(object):
             except (Exception, DatabaseError) as error:
                 logging.warning("get other error {}".format(error))
                 break
+
+        self.elapsed_time = time.perf_counter() - start_time
         return { 'elapsed_time_second': self.elapsed_time,
                  'num_retry': self.num_retry,
                  'succeed': self.succeed,

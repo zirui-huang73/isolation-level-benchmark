@@ -1,4 +1,3 @@
-from psycopg2 import *
 from .transaction import Transaction
 import time
 

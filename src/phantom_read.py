@@ -14,8 +14,7 @@ class transaction1(Transaction):
         res1 = cur.fetchall()
         cur.execute("select * from cal where z = 'male'")
         res2 = cur.fetchall()
-        if res1.sort() == res2.sort():
-            self.correct = True
+        self.correct = (res1.sort() == res2.sort())
         cur.execute('commit')
         cur.close()
 

@@ -25,9 +25,6 @@ class transaction2(Transaction):
         cur = self.conn.cursor()
         cur.execute('begin')
         cur.execute('update cal set x = 25 where id = 1')
-        x = cur.fetchone()[0]
         cur.execute('update cal set y = 75 where id = 1')
-        y = cur.fetchone()[0]
-        self.correct = (x + y == 100)
         self.conn.commit()
         cur.close()
