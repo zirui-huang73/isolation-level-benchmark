@@ -26,6 +26,7 @@ class transaction2(Transaction):
         rnd = random.randint(very_large_id_range[0], very_large_id_range[1])
         cur = self.conn.cursor()
         cur.execute('begin')
+        cur.execute("DELETE FROM cal WHERE id = %s", 0)
         cur.execute("INSERT INTO cal (id, x, y, z) VALUES(%s, %s, %s, %s)", (rnd, 100, 100, 'male'))
         cur.execute('commit')
         cur.close()
