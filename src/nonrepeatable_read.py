@@ -9,8 +9,10 @@ class transaction1(Transaction):
         cur = self.conn.cursor()
         cur.execute('begin')
         cur.execute('select x from cal where id = 1')
-        time.sleep(0.1)
+        res1 = cur.fetchone()
         cur.execute('select x from cal where id = 1')
+        res2 = cur.fetchone()
+        self.correct = (res1 == res2)
         self.conn.commit()
         cur.close()
 
