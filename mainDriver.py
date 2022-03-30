@@ -1,6 +1,6 @@
 import sys, psycopg2, random, json, os, logging
 from init import config
-from src import lost_update, phantom_read, nonrepeatable_read, Read_Skew, Write_Skew
+from src import lost_update, phantom_read, nonrepeatable_read, read_skew, write_skew
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 
@@ -8,8 +8,8 @@ TransactionClassMap = {
     'LU': [lost_update.transaction1, lost_update.transaction2],
     'PR': [phantom_read.transaction1, phantom_read.transaction2],
     'NR': [nonrepeatable_read.transaction1, nonrepeatable_read.transaction2],
-    'RS': [Read_Skew.transaction1, Read_Skew.transaction2],
-    'WS': [Write_Skew.transaction1, Write_Skew.transaction2],
+    'RS': [read_skew.transaction1, read_skew.transaction2],
+    'WS': [write_skew.transaction1, write_skew.transaction2],
 }
 
 isolationMap = {
