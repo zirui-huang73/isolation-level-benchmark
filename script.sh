@@ -13,7 +13,7 @@ process_num=$3
 
 dateTime=$(date +'%Y%m%d%H%M%S')
 fileName="${anomaly}-${iso_level}-${process_num}-${dateTime}"
-echo "\n------start running cases for ${fileName}------\n"
+>&2 echo "\n------start running cases for ${fileName}------\n"
 
 for ((c = 0; c < $process_num; c++))
 do
@@ -26,4 +26,4 @@ for pid in ${pids[*]}; do
     wait $pid
 done
 
-echo "\n------finish running cases for ${fileName}, all subprocess end------\n"
+>&2 echo "\n------finish running cases for ${fileName}, all subprocess end------\n"
