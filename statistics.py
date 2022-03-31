@@ -10,7 +10,10 @@ if __name__ == '__main__':
     retryXactNum = 0
     totalNumRetries = 0
 
-    for subDirPath in os.listdir('{0}'.format(dirPath)):
+    subDirPaths = os.listdir('{0}'.format(dirPath))
+    subDirPaths.sort()
+
+    for subDirPath in subDirPaths:
         path = '{0}/{1}'.format(dirPath, subDirPath)
         if os.path.isdir(path):
             for file in os.listdir(path):
