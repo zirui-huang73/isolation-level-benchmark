@@ -1,5 +1,6 @@
 import os, json
 import numpy as np
+import pandas as pd
 
 if __name__ == '__main__':
     dirPath = 'logs'
@@ -12,6 +13,19 @@ if __name__ == '__main__':
 
     subDirPaths = os.listdir('{0}'.format(dirPath))
     subDirPaths.sort()
+    outputCsvPath = 'stats.csv'
+    data = {'process_num': [],
+            'iso_level': [],
+            'anomaly':[],
+            'txn_proceeded':[],
+            'txn_succeeded':[],
+            'txn_correct':[],
+            'txn_retries':[],
+            'retry_time':[],
+            'avg_latency':[],
+            '50_percentile_latency':[],
+            '95_percentile_latency':[],
+            '99_percentile_latency':[]}
 
     for subDirPath in subDirPaths:
         path = '{0}/{1}'.format(dirPath, subDirPath)
@@ -46,6 +60,22 @@ if __name__ == '__main__':
             print('95 percentile latency: {:.3f} ms'.format(perc_95th * 1000))
             print('99 percentile latency: {:.3f} ms'.format(perc_99th * 1000))
 
+            anomaly, iso_level, process_num, _ = subDirPath.split('-')
+            process_num = int(process_num)
+
+            data['anomaly'].append(anomaly)
+            data['iso_level'].append(iso_level)
+            data['process_num'].append(process_num)
+            data['txn_proceeded'].append(numProceeded)
+            data['txn_succeeded'].append(numSucceeded)
+            data['txn_correct'].append(numCorrect)
+            data['txn_retries'].append(retryXactNum)
+            data['retry_time'].append(totalNumRetries)
+            data['avg_latency'].append(average)
+            data['50_percentile_latency'].append(perc_50th)
+            data['95_percentile_latency'].append(perc_95th)
+            data['99_percentile_latency'].append(perc_99th)
+
             latencies.clear()
             numProceeded = 0
             numSucceeded = 0
@@ -53,5 +83,6 @@ if __name__ == '__main__':
             retryXactNum = 0
             totalNumRetries = 0
 
-
-
+    df = pd.DataFrame(data=data)
+    df.sort_values(by='process_num', inplace=True)
+    df.to_csv(outputCsvPath)
