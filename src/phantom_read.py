@@ -1,5 +1,7 @@
 import random
 from .transaction import Transaction
+import time
+import logging
 
 very_large_id_range = (10 ** 8, 10 ** 9)
 
@@ -14,7 +16,7 @@ class transaction1(Transaction):
         res1 = cur.fetchall()
         cur.execute("select * from cal where z = 'male'")
         res2 = cur.fetchall()
-        self.correct = (res1.sort() == res2.sort())
+        self.correct = (sorted(res1) == sorted(res2))
         cur.execute('commit')
         cur.close()
 
