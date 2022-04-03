@@ -1,8 +1,8 @@
 from .transaction import Transaction
 
 class transaction1(Transaction):
-    def __init__(self, conn):
-        super().__init__(conn)
+    def __init__(self, conn, isolationLevel):
+        super().__init__(conn, isolationLevel)
 
     # constraint: x + y <= 100
     def process(self):
@@ -22,8 +22,8 @@ class transaction1(Transaction):
 
 
 class transaction2(Transaction):
-    def __init__(self, conn):
-        super().__init__(conn)
+    def __init__(self, conn, isolationLevel):
+        super().__init__(conn, isolationLevel)
 
     def process(self):
         cur = self.conn.cursor()

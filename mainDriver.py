@@ -13,9 +13,9 @@ TransactionClassMap = {
 }
 
 isolationMap = {
-    'RC': 'READ COMMITTED',
-    'RR': 'REPEATABLE READ',
-    'S': 'Serializable'
+    'RC': psycopg2.extensions.ISOLATION_LEVEL_READ_COMMITTED,
+    'RR': psycopg2.extensions.ISOLATION_LEVEL_REPEATABLE_READ,
+    'S': psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE
 }
 
 """
@@ -44,9 +44,9 @@ if __name__ == '__main__':
     try:
         params = config()
         conn = psycopg2.connect(**params)
+        conn.set_session(autocommit=False)
 
         isolationLevel = isolationMap[IL]
-        conn.set_session(isolation_level=isolationLevel, autocommit=False)
 
         TransactionClasses = TransactionClassMap[TYPE]
 
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         for i in range(N):
             index = random.randint(0, len(TransactionClasses) - 1)
             TransactionClass = TransactionClasses[index]
-            transaction = TransactionClass(conn)
+            transaction = TransactionClass(conn, isolationLevel)
             result[i] = transaction.exec()
 
         # write results to json file

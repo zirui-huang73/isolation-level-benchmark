@@ -3,12 +3,13 @@ import time
 import logging
 
 class Transaction(object):
-    def __init__(self, conn):
+    def __init__(self, conn, isolationLevel):
         self.conn = conn
         self.elapsed_time = -1
         self.num_retry = 0
         self.succeed = False
         self.correct = True
+        conn.set_isolation_level(isolationLevel)
 
     def process(self):
         raise NotImplementedError()
@@ -23,8 +24,8 @@ class Transaction(object):
             except OperationalError as error:
                 self.conn.rollback()
                 self.num_retry += 1
-                if self.num_retry == 3:
-                    logging.error("fail with too much retry({0} times)".format(self.num_retry))
+                if self.num_retry == 4:
+                    logging.error("fail with too much retry(4 times)")
                     break
                 sleep_time: float = (2 ** self.num_retry) * 0.1
                 time.sleep(sleep_time)
@@ -38,5 +39,5 @@ class Transaction(object):
         return { 'elapsed_time_second': self.elapsed_time,
                  'num_retry': self.num_retry,
                  'succeed': self.succeed,
-                 'correct': self.correct }
+                 'correct': self.correct}
 
