@@ -1,41 +1,49 @@
+import time
+
 from .transaction import Transaction
 
+
 class transaction1(Transaction):
-    def __init__(self, conn, isolationLevel):
-        super().__init__(conn, isolationLevel)
+    def __init__(self, isolationLevel):
+        super().__init__(isolationLevel)
 
     # constraint: x + y <= 100
-    def process(self):
+    def process(self, table_id):
         cur = self.conn.cursor()
         cur.execute('begin')
-        cur.execute('select x from cal where id = 1')  # get x = 30
-        x = cur.fetchone()[0]
-        cur.execute('update cal set y = 60 where id = 1')
 
-        # check correctness
-        cur.execute('select y from cal where id = 1')
+        # cur.execute('update cal set y = 60 where id = %s', (table_id,))
+        cur.execute('select y from cal where id = %s', (table_id,))  # get x = 30
         y = cur.fetchone()[0]
-        self.correct = (x + y <= 100)
+        if y == 0:
+            self.correct = True
+            return
+        cur.execute('update cal set x = 0 where id = %s', (table_id,))
+        cur.execute('select x from cal where id = %s', (table_id,))  # get x = 30
+        x = cur.fetchone()[0]
+        cur.execute('select y from cal where id = %s', (table_id,))  # get x = 30
+        y = cur.fetchone()[0]
 
+        self.correct = (x + y != 0)
         self.conn.commit()
         cur.close()
 
+        # x = 0, y = 100
+
 
 class transaction2(Transaction):
-    def __init__(self, conn, isolationLevel):
-        super().__init__(conn, isolationLevel)
+    def __init__(self, isolationLevel):
+        super().__init__(isolationLevel)
 
-    def process(self):
+    def process(self, table_id):
         cur = self.conn.cursor()
         cur.execute('begin')
-        cur.execute('select y from cal where id = 1')  # get y = 10
-        y = cur.fetchone()[0]
-        cur.execute('update cal set x = 50 where id = 1')
+        # cur.execute('select y from cal where id = %s', (table_id,))  # get y = 10
+        # y = cur.fetchone()[0]
+        # cur.execute('update cal set x = 50 where id = %s', (table_id,))
 
-        # check correctness
-        cur.execute('select x from cal where id = 1')
-        x = cur.fetchone()[0]
-        self.correct = (x + y <= 100)
+        cur.execute('update cal set y = 0 where id = %s', (table_id,))
 
+        self.correct = True
         self.conn.commit()
         cur.close()

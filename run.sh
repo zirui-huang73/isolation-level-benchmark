@@ -1,11 +1,17 @@
 process_num=$1
 anomalies=("LU" "NR" "PR" "RS" "WS")
 iso_levels=("RC" "RR" "S")
-for anomaly in ${anomalies[*]}
-do
-    for iso_level in ${iso_levels[*]}
+
+
+  for i in $(seq 1 10)
     do
-        python3 setup.py
-        ./script.sh $anomaly $iso_level $process_num
-    done
+      for anomaly in ${anomalies[*]}
+        do
+        for iso_level in ${iso_levels[*]}
+        do
+            python3 setup.py
+            ./script.sh $anomaly $iso_level $i
+        done
+        done
 done
+
