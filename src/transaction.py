@@ -29,22 +29,13 @@ class Transaction(object):
                 self.conn.rollback()
                 self.num_retry += 1
 
-                if self.isolationLevel == "RC":
-                    if self.num_retry == 3:
-                        logging.error("RC fail with too much retry(4)")
-                        break
-                if self.isolationLevel == "RR":
-                    if self.num_retry == 5:
-                        logging.error("RR fail with too much retry(5)")
-                        break
-                if self.isolationLevel == "S":
-                    if self.num_retry == 20:
-                        logging.error("S fail with too much retry(15)")
-                        break
+                if self.num_retry == 4:
+                    logging.error("RC fail with too much retry(4)")
+                    break
 
                 # sleep_time: float = (2 ** self.num_retry) * 0.1
                 sleep_time = 0.1
-                time.sleep(0.1)
+                time.sleep(sleep_time)
                 logging.warning("get operational error {}, sleep {} seconds".format(error, sleep_time))
                 continue
             except (Exception, DatabaseError) as error:

@@ -12,15 +12,16 @@ class transaction1(Transaction):
 
         cur.execute('select y from cal where id = %s', (table_id,))
         y = cur.fetchone()[0]
+
         if y == 0:
             self.correct = True
-            return
+        else:
+            cur.execute('select x from cal where id = %s', (table_id,))
+            x = cur.fetchone()[0]
+            cur.execute('select y from cal where id = %s', (table_id,))
+            y = cur.fetchone()[0]
+            self.correct = (y != 0)
 
-        cur.execute('select x from cal where id = %s', (table_id,))
-        x = cur.fetchone()[0]
-        cur.execute('select y from cal where id = %s', (table_id,))
-        y = cur.fetchone()[0]
-        self.correct = (y != 0)
         self.conn.commit()
         cur.close()
 

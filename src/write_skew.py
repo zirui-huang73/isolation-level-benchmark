@@ -17,14 +17,14 @@ class transaction1(Transaction):
         y = cur.fetchone()[0]
         if y == 0:
             self.correct = True
-            return
-        cur.execute('update cal set x = 0 where id = %s', (table_id,))
-        cur.execute('select x from cal where id = %s', (table_id,))  # get x = 30
-        x = cur.fetchone()[0]
-        cur.execute('select y from cal where id = %s', (table_id,))  # get x = 30
-        y = cur.fetchone()[0]
+        else:
+            cur.execute('update cal set x = 0 where id = %s', (table_id,))
+            cur.execute('select x from cal where id = %s', (table_id,))  # get x = 30
+            x = cur.fetchone()[0]
+            cur.execute('select y from cal where id = %s', (table_id,))  # get x = 30
+            y = cur.fetchone()[0]
+            self.correct = (x + y != 0)
 
-        self.correct = (x + y != 0)
         self.conn.commit()
         cur.close()
 
