@@ -54,6 +54,7 @@ if __name__ == '__main__':
         ret = {}
         queue = multiprocessing.Queue()
         queue.put(ret)
+        jobs = []
         for i in range(N):
             # i represent the id
             TransactionClass1 = TransactionClasses[0]
@@ -62,20 +63,21 @@ if __name__ == '__main__':
             txn1 = TransactionClass1(isolationLevel)
             txn2 = TransactionClass2(isolationLevel)
 
-            # Transaction.exec() takes two arguments: transaction id (i-1, i-2), result dict)
-            job1 = multiprocessing.Process(target=txn1.exec, args=(str(i+1)+"-1", queue, params))
-            job2 = multiprocessing.Process(target=txn2.exec, args=(str(i+1)+"-2", queue, params))
-            job1.start()
-            job2.start()
+            # Transaction.exdeveec() takes two arguments: transaction id (i-1, i-2), result dict)
+            jobs.append(multiprocessing.Process(target=txn1.exec, args=(str(i+1)+"-1", queue, params)))
+            jobs.append(multiprocessing.Process(target=txn2.exec, args=(str(i+1)+"-2", queue, params)))
 
-            job1.join()
-            job2.join()
+        for job in jobs:
+            job.start()
+
+        for job in jobs:
+            job.join()
 
         # write results to json file
-        dirPath = 'logs/{0}'.format(startTime+str(random.randint(1, 100)))
+        dirPath = 'logs/{0}'.format(startTime)
         result = queue.get()
         if not os.path.exists(dirPath):
-            os.makedirs(dirPath)
+            os.makedirs(dirPath, exist_ok=True)
         with open('{0}/{1}.json'.format(dirPath, iteration), 'w') as outputFile:
             json.dump(result, outputFile)
 
